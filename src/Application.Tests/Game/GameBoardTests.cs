@@ -20,7 +20,7 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 		public void Construct_an_empty_board()
 		{
 			// Assert
-			_gameBoard.Board.Count.Should().Be(6, "becase the board should have 6 rows");
+			_gameBoard.Board.Count.Should().Be(6, "because the board should have 6 rows");
 			foreach(var row in _gameBoard.Board)
 			{
 				row.Count.Should().Be(7, "because each row should have 7 columns");
@@ -32,7 +32,7 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 		public void Can_not_drop_an_empty_piece()
 		{
 			// Act - Assert
-			Action act = () => _gameBoard.TryDropPiece(BoardPiece.Empty, GameBoardColumn.Zero);
+			Action act = () => _gameBoard.DropPiece(BoardPiece.Empty, GameBoardColumn.Zero);
 			act.ShouldThrowExactly<ArgumentException>().WithMessage("Can not drop an empty piece into the game board");
 		}
 
@@ -58,7 +58,7 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 			{
 				var pieceToDrop = i % 2 == 0 ? BoardPiece.PlayerOne : BoardPiece.PlayerTwo;
 
-				var result = _gameBoard.TryDropPiece(pieceToDrop, column);
+				var result = _gameBoard.DropPiece(pieceToDrop, column);
 
 				result.Should().BeTrue();
 				_gameBoard.Board[i][columnNumber].Should().Be(pieceToDrop);
@@ -71,16 +71,82 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 			// Arrange
 			for(int i = 0; i <= 6; i++)
 			{
-				_gameBoard.TryDropPiece(BoardPiece.PlayerOne, GameBoardColumn.Zero);
+				_gameBoard.DropPiece(BoardPiece.PlayerOne, GameBoardColumn.Zero);
 			}
 
 			// Act
-			var result = _gameBoard.TryDropPiece(BoardPiece.PlayerTwo, GameBoardColumn.Zero);
+			var result = _gameBoard.DropPiece(BoardPiece.PlayerTwo, GameBoardColumn.Zero);
 
 			// Assert
 			result.Should().BeFalse();
 			_gameBoard.Board[0][0].Should().Be(BoardPiece.PlayerOne);
 
+		}
+
+		[Test]
+		public void Board_knows_game_over_vertical()
+		{
+			// Arrange
+			for(var i = 0; i < 4; i++)
+			{
+				_gameBoard.DropPiece(BoardPiece.PlayerOne, GameBoardColumn.Three);
+			}
+
+			// Act
+			var result = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
+
+			// Assert
+			result.Should().BeTrue();
+		}
+
+		[Test]
+		public void Board_knows_game_over_horizontal()
+		{
+			// Arrange
+			new[] {GameBoardColumn.One, GameBoardColumn.Two, GameBoardColumn.Three, GameBoardColumn.Four}.Select(col => _gameBoard.DropPiece(BoardPiece.PlayerOne, col));
+
+			// Act
+			var result = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
+
+			// Assert
+			result.Should().BeTrue();
+		}
+
+		[Test]
+		public void Board_knows_game_over_diagonal()
+		{
+			// Arrange
+			new[]
+			{
+				new {gbc = GameBoardColumn.Zero, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerOne}
+			}.Select(x => _gameBoard.DropPiece(x.bp, x.gbc));
+
+			// Act
+			var result = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
+
+			// Assert
+			result.Should().BeTrue();
+		}
+
+		[Test]
+		public void Board_game_over_no_false_positives()
+		{
+			// Act
+			var playerOneResult = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
+			var playerTwoResult = _gameBoard.IsGameOver(BoardPiece.PlayerTwo);
+
+			// Assert
+			playerOneResult.Should().BeFalse();
+			playerTwoResult.Should().BeFalse();
 		}
 	}
 }

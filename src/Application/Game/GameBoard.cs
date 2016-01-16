@@ -30,7 +30,7 @@ namespace Octogami.ConnectFour.Application.Game
 
 		public IReadOnlyList<IReadOnlyList<BoardPiece>> Board => _board;
 
-		public bool TryDropPiece(BoardPiece piece, GameBoardColumn column)
+		public bool DropPiece(BoardPiece piece, GameBoardColumn column)
 		{
 			if(piece == BoardPiece.Empty)
 			{
@@ -48,6 +48,11 @@ namespace Octogami.ConnectFour.Application.Game
 			}
 
 			return false;
+		}
+
+		public bool IsGameOver(BoardPiece boardPiece)
+		{
+			throw new NotImplementedException();
 		}
 	}
 
