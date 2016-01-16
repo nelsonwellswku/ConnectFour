@@ -32,7 +32,22 @@ namespace Octogami.ConnectFour.Application.Game
 
 		public bool TryDropPiece(BoardPiece piece, GameBoardColumn column)
 		{
-			throw new NotImplementedException();
+			if(piece == BoardPiece.Empty)
+			{
+				throw new ArgumentException("Can not drop an empty piece into the game board");
+			}
+
+			var columnNumber = column.Column;
+			for(var row = 5; row >= 0; row--)
+			{
+				if(_board[row][columnNumber] == BoardPiece.Empty)
+				{
+					_board[row][columnNumber] = piece;
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 

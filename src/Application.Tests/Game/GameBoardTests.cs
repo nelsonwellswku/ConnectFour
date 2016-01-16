@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Octogami.ConnectFour.Application.Game;
 
-namespace Octogami.ConnectFour.Application.Tests
+namespace Octogami.ConnectFour.Application.Tests.Game
 {
 	public class GameBoardTests
 	{
@@ -33,7 +33,7 @@ namespace Octogami.ConnectFour.Application.Tests
 		{
 			// Act - Assert
 			Action act = () => _gameBoard.TryDropPiece(BoardPiece.Empty, GameBoardColumn.Zero);
-			act.ShouldThrowExactly<InvalidOperationException>().WithMessage("Can not drop an empty piece into the game board");
+			act.ShouldThrowExactly<ArgumentException>().WithMessage("Can not drop an empty piece into the game board");
 		}
 
 		[TestCase(0)]
@@ -61,7 +61,7 @@ namespace Octogami.ConnectFour.Application.Tests
 				var result = _gameBoard.TryDropPiece(pieceToDrop, column);
 
 				result.Should().BeTrue();
-				_gameBoard.Board[columnNumber][i].Should().Be(pieceToDrop);
+				_gameBoard.Board[i][columnNumber].Should().Be(pieceToDrop);
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace Octogami.ConnectFour.Application.Tests
 
 			// Assert
 			result.Should().BeFalse();
-			_gameBoard.Board[0].Select(x => x).Distinct().Single().Should().Be(BoardPiece.PlayerOne);
+			_gameBoard.Board[0][0].Should().Be(BoardPiece.PlayerOne);
 
 		}
 	}
