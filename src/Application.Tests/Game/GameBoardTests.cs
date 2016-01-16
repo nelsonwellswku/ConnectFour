@@ -103,7 +103,9 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 		public void Board_knows_game_over_horizontal()
 		{
 			// Arrange
-			new[] {GameBoardColumn.One, GameBoardColumn.Two, GameBoardColumn.Three, GameBoardColumn.Four}.Select(col => _gameBoard.DropPiece(BoardPiece.PlayerOne, col));
+			var _ = new[] {GameBoardColumn.One, GameBoardColumn.Two, GameBoardColumn.Three, GameBoardColumn.Four}
+				.Select(col => _gameBoard.DropPiece(BoardPiece.PlayerOne, col))
+				.ToList();
 
 			// Act
 			var result = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
@@ -113,12 +115,12 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 		}
 
 		[Test]
-		public void Board_knows_game_over_diagonal()
+		public void Board_knows_game_over_diagonal_right()
 		{
 			// Arrange
-			new[]
+			var _ = new[]
 			{
-				new {gbc = GameBoardColumn.Zero, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.One, bp = BoardPiece.PlayerOne},
 				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerTwo},
 				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerOne},
 				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerTwo},
@@ -128,7 +130,32 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerTwo},
 				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerTwo},
 				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerOne}
-			}.Select(x => _gameBoard.DropPiece(x.bp, x.gbc));
+			}.Select(x => _gameBoard.DropPiece(x.bp, x.gbc)).ToList();
+
+			// Act
+			var result = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
+
+			// Assert
+			result.Should().BeTrue();
+		}
+
+		[Test]
+		public void Board_knows_game_over_diagonal_left()
+		{
+			// Arrange
+			var _ = new[]
+			{
+				new {gbc = GameBoardColumn.One, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.One, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.One, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.One, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerTwo},
+				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerOne},
+				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerOne}
+			}.Select(x => _gameBoard.DropPiece(x.bp, x.gbc)).ToList();
 
 			// Act
 			var result = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
