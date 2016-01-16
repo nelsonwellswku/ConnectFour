@@ -154,7 +154,7 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerOne},
 				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerTwo},
 				new {gbc = GameBoardColumn.Three, bp = BoardPiece.PlayerOne},
-				new {gbc = GameBoardColumn.Two, bp = BoardPiece.PlayerOne}
+				new {gbc = GameBoardColumn.Four, bp = BoardPiece.PlayerOne}
 			}.Select(x => _gameBoard.DropPiece(x.bp, x.gbc)).ToList();
 
 			// Act

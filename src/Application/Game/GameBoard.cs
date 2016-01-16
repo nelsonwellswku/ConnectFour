@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Octogami.ConnectFour.Application.Game
 {
 	public class GameBoard
 	{
+		private const int MaxRowIndex = 5;
+		private const int MaxColumnIndex = 6;
+
 		private readonly List<List<BoardPiece>> _board;
 		/*
 			_board[row][column]
@@ -39,7 +43,7 @@ namespace Octogami.ConnectFour.Application.Game
 
 			var columnNumber = column.Column;
 
-			for(var row = 5; row >= 0; row--)
+			for(var row = MaxRowIndex; row >= 0; row--)
 			{
 				if(_board[row][columnNumber] == BoardPiece.Empty)
 				{
@@ -53,11 +57,9 @@ namespace Octogami.ConnectFour.Application.Game
 
 		public bool IsGameOver(BoardPiece boardPiece)
 		{
-			// Only check from rows 5 to 3 so that private functions that go up rows don't have to do bounds checking
-			for (int row = 5; row >= 3; row--)
+			for (int row = MaxRowIndex; row >= 0; row--)
 			{
-				// Likewise, only columns 0 to 3 so that checking up column indices doesn't have to do bounds checking
-				for(int col = 0; col <= 3; col++)
+				for(int col = 0; col <= MaxColumnIndex; col++)
 				{
 					if(CheckGameOver(boardPiece, row, col))
 					{
@@ -71,7 +73,17 @@ namespace Octogami.ConnectFour.Application.Game
 
 		private bool CheckGameOver(BoardPiece boardPiece, int row, int column)
 		{
-			return CheckGameOverVertical(boardPiece, row, column) || CheckGameOverHorizontal(boardPiece, row, column);
+			var standardCheck = false;
+			if(row >= 3 && column <= 3)
+			{
+				standardCheck = CheckGameOverVertical(boardPiece, row, column) ||
+				                CheckGameOverHorizontal(boardPiece, row, column) ||
+				                CheckGameOverDiagonalRight(boardPiece, row, column);
+			}
+
+			var diagonalLeftCheck = CheckGameOverDiagonalLeft(boardPiece, row, column);
+
+			return standardCheck || diagonalLeftCheck;
 		}
 
 		private bool CheckGameOverVertical(BoardPiece boardPiece, int row, int column)
@@ -88,6 +100,48 @@ namespace Octogami.ConnectFour.Application.Game
 			       _board[row][column + 1] == boardPiece &&
 			       _board[row][column + 2] == boardPiece &&
 			       _board[row][column + 3] == boardPiece;
+		}
+
+		private bool CheckGameOverDiagonalLeft(BoardPiece boardPiece, int row, int column)
+		{
+			// TODO: Do bounds checking instead of relying on the exception being thrown
+			bool result;
+			try
+			{
+				result = _board[row][column] == boardPiece &&
+				         _board[row - 1][column - 1] == boardPiece &&
+				         _board[row - 2][column - 2] == boardPiece &&
+				         _board[row - 3][column - 3] == boardPiece;
+			}
+			catch(IndexOutOfRangeException)
+			{
+				return false;
+			}
+
+			return result;
+		}
+
+		private bool CheckGameOverDiagonalRight(BoardPiece boardPiece, int row, int column)
+		{
+			return _board[row][column] == boardPiece &&
+				   _board[row - 1][column + 1] == boardPiece &&
+				   _board[row - 2][column + 2] == boardPiece &&
+				   _board[row - 3][column + 3] == boardPiece;
+		}
+
+		/// <summary>
+		/// Display an ASCII art summery of the current board state
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			var builder = new StringBuilder();
+			foreach(var row in _board)
+			{
+				builder.AppendLine(string.Join(" ", row.Select(x => x == BoardPiece.Empty ? "_" : x == BoardPiece.PlayerOne ? "1" : x == BoardPiece.PlayerTwo ? "2" : "0")));
+			}
+
+			return builder.ToString();
 		}
 	}
 
