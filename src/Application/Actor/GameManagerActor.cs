@@ -22,7 +22,7 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				if(potentialGame.Key == default(Guid))
 				{
-					var newGame = Context.ActorOf<GameActor>("Game " + gameToJoin);
+					var newGame = Context.ActorOf<GameActor>("Game-" + gameToJoin);
 					_pendingGames.Add(gameToJoin, newGame);
 				}
 
