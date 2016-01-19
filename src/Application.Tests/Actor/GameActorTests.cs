@@ -1,4 +1,5 @@
 ﻿using System;
+using Akka.Actor;
 using Akka.TestKit.NUnit;
 using NUnit.Framework;
 using Octogami.ConnectFour.Application.Actor;
@@ -11,7 +12,7 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 		public void Player_one_can_join_new_game()
 		{
 			var gameId = Guid.NewGuid();
-			var actor = ActorOfAsTestActorRef<GameActor>();
+			var actor = Sys.ActorOf(Props.Create(() => new GameActor()));
 			actor.Tell(new JoinGameById("John", gameId));
 			ExpectMsg<JoinGameAcceptedMessage>(msg => msg.Username == "John" && msg.GameId == gameId && msg.PlayerSlot == "PlayerOne");
 		}
@@ -20,10 +21,9 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 		public void Player_two_can_join_existing_game()
 		{
 			var gameId = Guid.NewGuid();
-			var actor = ActorOfAsTestActorRef<GameActor>();
+			var actor = Sys.ActorOf(Props.Create(() => new GameActor()));
 			actor.Tell(new JoinGameById("John", gameId));
 			ExpectMsg<JoinGameAcceptedMessage>();
-
 			actor.Tell(new JoinGameById("Jane", gameId));
 			ExpectMsg<JoinGameAcceptedMessage>(msg => msg.Username == "Jane" && msg.GameId == gameId && msg.PlayerSlot == "PlayerTwo");
 		}
@@ -32,7 +32,7 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 		public void Player_three_gets_a_game_full_rejection_message()
 		{
 			var gameId = Guid.NewGuid();
-			var actor = ActorOfAsTestActorRef<GameActor>();
+			var actor = Sys.ActorOf(Props.Create(() => new GameActor()));
 			actor.Tell(new JoinGameById("John", gameId));
 			ExpectMsg<JoinGameAcceptedMessage>();
 

@@ -18,15 +18,24 @@ namespace Octogami.ConnectFour.Application.Actor
 			Receive<JoinGame>(msg =>
 			{
 				var potentialGame = _pendingGames.FirstOrDefault();
-				var gameToJoin = potentialGame.Key == default(Guid) ? Guid.NewGuid() : potentialGame.Key;
 
-				if(potentialGame.Key == default(Guid))
+				var gameAvailableToJoin = potentialGame.Key != default(Guid);
+
+				Guid gameToJoin;
+
+				if(!gameAvailableToJoin)
 				{
+					gameToJoin = Guid.NewGuid();
 					var newGame = Context.ActorOf<GameActor>("Game-" + gameToJoin);
 					_pendingGames.Add(gameToJoin, newGame);
 				}
-
-				_pendingGames[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin));
+				else
+				{
+					gameToJoin = potentialGame.Key;
+					_activeGames.Add(gameToJoin, _pendingGames[gameToJoin]);
+					_pendingGames.Remove(gameToJoin);
+					_activeGames[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin));
+				}
 			});
 		}
 	}

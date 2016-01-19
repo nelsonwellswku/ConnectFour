@@ -14,7 +14,6 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 			var actor = ActorOfAsTestActorRef<GameManagerActor>();
 
 			actor.Tell(new JoinGame("John"));
-
 			ExpectNoMsg();
 		}
 	}
