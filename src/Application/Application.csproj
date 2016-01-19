@@ -51,6 +51,7 @@
     <Compile Include="Actor\GameActor.cs" />
     <Compile Include="Actor\GameManagerActor.cs" />
     <Compile Include="Actor\JoinGameMessages.cs" />
+    <Compile Include="Actor\PlayGameMessages.cs" />
     <Compile Include="Game\BoardPiece.cs" />
     <Compile Include="Game\GameBoard.cs" />
     <Compile Include="Game\GameBoardColumn.cs" />
