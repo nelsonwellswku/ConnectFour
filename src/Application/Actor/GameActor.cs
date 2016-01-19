@@ -44,51 +44,100 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				Sender.Tell(new JoinGameAcceptedMessage(msg.Username, _gameId, playerSlot));
 
-				Become(FullGame);
+				Become(PlayerOneTurn);
 			});
 		}
 
-		public void FullGame()
+		public void PlayerOneTurn()
 		{
 			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.Username, msg.GameId, "Game full")));
 
 			Receive<MakeMove>(msg =>
 			{
-				var isPlayerOne = msg.Username == _playerOne;
-
-				var column = GameBoardColumn.Zero;
-				switch(msg.Column)
+				if (msg.Username != _playerOne)
 				{
-					case 0: column = GameBoardColumn.Zero;	break;
-					case 1: column = GameBoardColumn.One;	break;
-					case 2: column = GameBoardColumn.Two;	break;
-					case 3: column = GameBoardColumn.Three;	break;
-					case 4: column = GameBoardColumn.Four;	break;
-					case 5: column = GameBoardColumn.Five;	break;
+					// TODO: Tell sender that that this isn't a valid move
+					// Sender.Tell(...)
 
-					// TODO: Send a failure message back to the sender
-					default: break;
+					return;
 				}
 
-				_gameBoard.DropPiece(isPlayerOne ? BoardPiece.PlayerOne : BoardPiece.PlayerTwo, column);
+				var column = GetColumn(msg.Column);
+				_gameBoard.DropPiece(BoardPiece.PlayerOne, column);
 
-				var playerOneWins = _gameBoard.IsGameOver(BoardPiece.PlayerOne);
-				var playerTwoWins = _gameBoard.IsGameOver(BoardPiece.PlayerTwo);
-
-				string winner = null;
-				if(playerOneWins)
+				if (_gameBoard.IsGameOver(BoardPiece.PlayerOne))
 				{
-					winner = _playerOne;
 				}
-				else if(playerTwoWins)
+				else if (_gameBoard.IsDraw())
 				{
-					winner = _playerTwo;
 				}
-
-				// TODO: Need to check if the game is a draw and include that in the message. This should be a method in the GameBoard class.
-
-				Sender.Tell(new GameStatusMessage(_gameBoard.Board, playerOneWins || playerTwoWins, winner));
+				else
+				{
+					Become(PlayerTwoTurn);
+				}
 			});
+		}
+
+		public void PlayerTwoTurn()
+		{
+			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.Username, msg.GameId, "Game full")));
+
+			Receive<MakeMove>(msg =>
+			{
+				if(msg.Username != _playerTwo)
+				{
+					// TODO: Tell sender that that this isn't a valid move
+					// Sender.Tell(...)
+
+					return;
+				}
+
+				var column = GetColumn(msg.Column);
+				_gameBoard.DropPiece(BoardPiece.PlayerTwo, column);
+
+				if(_gameBoard.IsGameOver(BoardPiece.PlayerTwo))
+				{
+				}
+				else if(_gameBoard.IsDraw())
+				{
+				}
+				else
+				{
+					Become(PlayerOneTurn);
+				}
+			});
+		}
+
+		private static GameBoardColumn GetColumn(int columnNumber)
+		{
+			var column = GameBoardColumn.Zero;
+			switch (columnNumber)
+			{
+				case 0:
+					column = GameBoardColumn.Zero;
+					break;
+				case 1:
+					column = GameBoardColumn.One;
+					break;
+				case 2:
+					column = GameBoardColumn.Two;
+					break;
+				case 3:
+					column = GameBoardColumn.Three;
+					break;
+				case 4:
+					column = GameBoardColumn.Four;
+					break;
+				case 5:
+					column = GameBoardColumn.Five;
+					break;
+
+				// TODO: Send a failure message back to the sender
+				default:
+					break;
+			}
+
+			return column;
 		}
 	}
 }

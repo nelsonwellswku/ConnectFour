@@ -71,6 +71,11 @@ namespace Octogami.ConnectFour.Application.Game
 			return false;
 		}
 
+		public bool IsDraw()
+		{
+			throw new NotImplementedException();
+		}
+
 		private bool CheckGameOver(BoardPiece boardPiece, int row, int column)
 		{
 			var standardCheck = false;
