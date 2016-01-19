@@ -15,38 +15,45 @@ namespace Octogami.ConnectFour.Application.Actor
 		{
 			_gameBoard = new GameBoard();
 
+			Become(NewGame);
+		}
+
+		public void NewGame()
+		{
 			Receive<JoinGameById>(msg =>
 			{
-				// Assign the game id only when someone tries to join the game
+				// Assign, not generate, the game id only when a new game is created 
 				// because the game id is assigned by the game manager, not the game itself
 				if(_gameId == default(Guid))
 				{
 					_gameId = msg.GameId;
 				}
 
-				// TODO: Read more about switchable behaviors; this seems like a better solution than checking if the game is full by hand
-				// http://getakka.net/docs/working-with-actors/Switchable%20Behaviors
-				if(_playerOne != null && _playerTwo != null)
-				{
-					// Game is full
-					Sender.Tell(new JoinGameRejectionMessage(msg.Username, msg.GameId, "Game full"));
-					return;
-				}
-
-				string playerSlot = null;
-				if(_playerOne == null)
-				{
-					_playerOne = msg.Username;
-					playerSlot = "PlayerOne";
-				}
-				else if(_playerTwo == null)
-				{
-					_playerTwo = msg.Username;
-					playerSlot = "PlayerTwo";
-				}
+				_playerOne = msg.Username;
+				var playerSlot = "PlayerOne";
 
 				Sender.Tell(new JoinGameAcceptedMessage(msg.Username, _gameId, playerSlot));
+
+				Become(PendingGame);
 			});
+		}
+
+		public void PendingGame()
+		{
+			Receive<JoinGameById>(msg =>
+			{
+				_playerTwo = msg.Username;
+				var playerSlot = "PlayerTwo";
+
+				Sender.Tell(new JoinGameAcceptedMessage(msg.Username, _gameId, playerSlot));
+
+				Become(FullGame);
+			});
+		}
+
+		public void FullGame()
+		{
+			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.Username, msg.GameId, "Game full")));
 		}
 	}
 }
