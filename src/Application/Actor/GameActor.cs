@@ -62,7 +62,7 @@ namespace Octogami.ConnectFour.Application.Actor
 					return;
 				}
 
-				var column = GetColumn(msg.Column);
+				var column = GameBoardColumn.GetColumn(msg.Column);
 				_gameBoard.DropPiece(BoardPiece.PlayerOne, column);
 
 				if (_gameBoard.IsGameOver(BoardPiece.PlayerOne))
@@ -92,7 +92,7 @@ namespace Octogami.ConnectFour.Application.Actor
 					return;
 				}
 
-				var column = GetColumn(msg.Column);
+				var column = GameBoardColumn.GetColumn(msg.Column);
 				_gameBoard.DropPiece(BoardPiece.PlayerTwo, column);
 
 				if(_gameBoard.IsGameOver(BoardPiece.PlayerTwo))
@@ -108,36 +108,6 @@ namespace Octogami.ConnectFour.Application.Actor
 			});
 		}
 
-		private static GameBoardColumn GetColumn(int columnNumber)
-		{
-			var column = GameBoardColumn.Zero;
-			switch (columnNumber)
-			{
-				case 0:
-					column = GameBoardColumn.Zero;
-					break;
-				case 1:
-					column = GameBoardColumn.One;
-					break;
-				case 2:
-					column = GameBoardColumn.Two;
-					break;
-				case 3:
-					column = GameBoardColumn.Three;
-					break;
-				case 4:
-					column = GameBoardColumn.Four;
-					break;
-				case 5:
-					column = GameBoardColumn.Five;
-					break;
-
-				// TODO: Send a failure message back to the sender
-				default:
-					break;
-			}
-
-			return column;
-		}
+		
 	}
 }

@@ -175,5 +175,37 @@ namespace Octogami.ConnectFour.Application.Tests.Game
 			playerOneResult.Should().BeFalse();
 			playerTwoResult.Should().BeFalse();
 		}
+
+		[Test]
+		public void Is_game_a_draw_yes()
+		{
+			// Arrange
+			foreach(var column in Enumerable.Range(0, 7))
+			{
+				foreach(var row in Enumerable.Range(0, 6))
+				{
+					_gameBoard.DropPiece(column % 2 == 0 ? BoardPiece.PlayerOne : BoardPiece.PlayerTwo, GameBoardColumn.GetColumn(column));
+				}
+			}
+
+			// Act
+			var result = _gameBoard.IsDraw();
+
+			// Assert
+			result.Should().BeTrue();
+		}
+
+		[Test]
+		public void Is_game_a_draw_no()
+		{
+			// Arrange
+			_gameBoard.DropPiece(BoardPiece.PlayerOne, GameBoardColumn.One);
+
+			// Act
+			var result = _gameBoard.IsDraw();
+
+			// Assert
+			result.Should().BeFalse();
+		}
 	}
 }

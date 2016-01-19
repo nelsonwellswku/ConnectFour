@@ -73,7 +73,7 @@ namespace Octogami.ConnectFour.Application.Game
 
 		public bool IsDraw()
 		{
-			throw new NotImplementedException();
+			return _board.SelectMany(x => x).All(x => x != BoardPiece.Empty);
 		}
 
 		private bool CheckGameOver(BoardPiece boardPiece, int row, int column)
