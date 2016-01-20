@@ -67,9 +67,13 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				if (_gameBoard.IsGameOver(BoardPiece.PlayerOne))
 				{
+					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, _playerOne));
+					Sender.Tell(new GameOverMessage(_gameId));
 				}
 				else if (_gameBoard.IsDraw())
 				{
+					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, "Draw"));
+					Sender.Tell(new GameOverMessage(_gameId));
 				}
 				else
 				{
@@ -97,9 +101,13 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				if(_gameBoard.IsGameOver(BoardPiece.PlayerTwo))
 				{
+					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, _playerTwo));
+					Sender.Tell(new GameOverMessage(_gameId));
 				}
 				else if(_gameBoard.IsDraw())
 				{
+					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, "Draw"));
+					Sender.Tell(new GameOverMessage(_gameId));
 				}
 				else
 				{
@@ -107,7 +115,5 @@ namespace Octogami.ConnectFour.Application.Actor
 				}
 			});
 		}
-
-		
 	}
 }

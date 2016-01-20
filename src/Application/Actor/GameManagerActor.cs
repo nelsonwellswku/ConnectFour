@@ -37,6 +37,22 @@ namespace Octogami.ConnectFour.Application.Actor
 					_activeGames[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin));
 				}
 			});
+
+			Receive<GameOverMessage>(msg =>
+			{
+				if(_activeGames.ContainsKey(msg.GameId))
+				{
+					var actor = _activeGames[msg.GameId];
+					_activeGames.Remove(msg.GameId);
+					Context.Stop(actor);
+				}
+				else if(_pendingGames.ContainsKey(msg.GameId))
+				{
+					var actor = _pendingGames[msg.GameId];
+					_pendingGames.Remove(msg.GameId);
+					Context.Stop(actor);
+				}
+			});
 		}
 	}
 }
