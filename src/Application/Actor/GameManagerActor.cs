@@ -21,38 +21,40 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				var gameAvailableToJoin = potentialGame.Key != default(Guid);
 
-				Guid gameToJoin;
+				var gameToJoin = Guid.NewGuid();
+				Func<Dictionary<Guid, IActorRef>> dictToSendMessageTo = () => _pendingGames;
 
 				if(!gameAvailableToJoin)
 				{
-					gameToJoin = Guid.NewGuid();
 					var newGame = Context.ActorOf<GameActor>("Game-" + gameToJoin);
 					_pendingGames.Add(gameToJoin, newGame);
 				}
 				else
 				{
+					dictToSendMessageTo = () => _activeGames;
 					gameToJoin = potentialGame.Key;
 					_activeGames.Add(gameToJoin, _pendingGames[gameToJoin]);
 					_pendingGames.Remove(gameToJoin);
-					_activeGames[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin));
 				}
+
+				dictToSendMessageTo()[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin), Sender);
 			});
 
 			Receive<GameOverMessage>(msg =>
 			{
-				if(_activeGames.ContainsKey(msg.GameId))
-				{
-					var actor = _activeGames[msg.GameId];
-					_activeGames.Remove(msg.GameId);
-					Context.Stop(actor);
-				}
-				else if(_pendingGames.ContainsKey(msg.GameId))
-				{
-					var actor = _pendingGames[msg.GameId];
-					_pendingGames.Remove(msg.GameId);
-					Context.Stop(actor);
-				}
+				EndGame(_pendingGames, msg.GameId);
+				EndGame(_activeGames, msg.GameId);
 			});
+		}
+
+		private static void EndGame(IDictionary<Guid, IActorRef> gameDict, Guid id)
+		{
+			if(gameDict.ContainsKey(id))
+			{
+				var actor = gameDict[id];
+				gameDict.Remove(id);
+				Context.Stop(actor);
+			}
 		}
 	}
 }
