@@ -22,7 +22,7 @@ namespace Octogami.ConnectFour.Application.Actor
 				var gameAvailableToJoin = potentialGame.Key != default(Guid);
 
 				var gameToJoin = Guid.NewGuid();
-				Func<Dictionary<Guid, IActorRef>> dictToSendMessageTo = () => _pendingGames;
+				var dictToSendMessageTo = _pendingGames;
 
 				if(!gameAvailableToJoin)
 				{
@@ -31,13 +31,13 @@ namespace Octogami.ConnectFour.Application.Actor
 				}
 				else
 				{
-					dictToSendMessageTo = () => _activeGames;
+					dictToSendMessageTo =  _activeGames;
 					gameToJoin = potentialGame.Key;
 					_activeGames.Add(gameToJoin, _pendingGames[gameToJoin]);
 					_pendingGames.Remove(gameToJoin);
 				}
 
-				dictToSendMessageTo()[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin), Sender);
+				dictToSendMessageTo[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin), Sender);
 			});
 
 			Receive<GameOverMessage>(msg =>
