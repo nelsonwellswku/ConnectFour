@@ -29,7 +29,7 @@ namespace Octogami.ConnectFour.Application.Actor
 				_playerOne = msg.Username;
 				var playerSlot = "PlayerOne";
 
-				Sender.Tell(new JoinGameAcceptedMessage(msg.Username, _gameId, playerSlot));
+				Sender.Tell(new JoinGameAcceptedMessage(msg.ConnectionId, msg.Username, _gameId, playerSlot));
 
 				Become(PendingGame);
 			});
@@ -42,7 +42,7 @@ namespace Octogami.ConnectFour.Application.Actor
 				_playerTwo = msg.Username;
 				var playerSlot = "PlayerTwo";
 
-				Sender.Tell(new JoinGameAcceptedMessage(msg.Username, _gameId, playerSlot));
+				Sender.Tell(new JoinGameAcceptedMessage(msg.ConnectionId, msg.Username, _gameId, playerSlot));
 
 				Become(PlayerOneTurn);
 			});
@@ -50,7 +50,7 @@ namespace Octogami.ConnectFour.Application.Actor
 
 		public void PlayerOneTurn()
 		{
-			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.Username, msg.GameId, "Game full")));
+			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.ConnectionId, msg.Username, msg.GameId, "Game full")));
 
 			Receive<MakeMove>(msg =>
 			{
@@ -84,7 +84,7 @@ namespace Octogami.ConnectFour.Application.Actor
 
 		public void PlayerTwoTurn()
 		{
-			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.Username, msg.GameId, "Game full")));
+			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.ConnectionId, msg.Username, msg.GameId, "Game full")));
 
 			Receive<MakeMove>(msg =>
 			{

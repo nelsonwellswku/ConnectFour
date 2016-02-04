@@ -4,12 +4,12 @@ using Octogami.ConnectFour.Application.Game;
 
 namespace Octogami.ConnectFour.Application.Actor
 {
-	public class MakeMove
+	public class MakeMove : SignalRUserMessage
 	{
 		public string Username { get; }
 		public int Column { get; }
 
-		public MakeMove(string username, int column)
+		public MakeMove(string connectionId, string username, int column) : base(connectionId)
 		{
 			Username = username;
 			Column = column;

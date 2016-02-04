@@ -37,7 +37,7 @@ namespace Octogami.ConnectFour.Application.Actor
 					_pendingGames.Remove(gameToJoin);
 				}
 
-				dictToSendMessageTo[gameToJoin].Tell(new JoinGameById(msg.Username, gameToJoin), Sender);
+				dictToSendMessageTo[gameToJoin].Tell(new JoinGameById(msg.ConnectionId, msg.Username, gameToJoin), Sender);
 			});
 
 			Receive<GameOverMessage>(msg =>

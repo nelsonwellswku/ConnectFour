@@ -2,9 +2,19 @@
 
 namespace Octogami.ConnectFour.Application.Actor
 {
-	public class JoinGame
+	public abstract class SignalRUserMessage
 	{
-		public JoinGame(string username)
+		public string ConnectionId { get; }
+
+		protected SignalRUserMessage(string connectionId)
+		{
+			ConnectionId = connectionId;
+		}
+	}
+
+	public class JoinGame : SignalRUserMessage
+	{
+		public JoinGame(string connectionId, string username) : base(connectionId)
 		{
 			Username = username;
 		}
@@ -14,7 +24,7 @@ namespace Octogami.ConnectFour.Application.Actor
 
 	public class JoinGameById : JoinGame
 	{
-		public JoinGameById(string username, Guid gameId) : base(username)
+		public JoinGameById(string connectionId, string username, Guid gameId) : base(connectionId, username)
 		{
 			GameId = gameId;
 		}
@@ -22,13 +32,13 @@ namespace Octogami.ConnectFour.Application.Actor
 		public Guid GameId { get; }
 	}
 
-	public class JoinGameRejectionMessage
+	public class JoinGameRejectionMessage : SignalRUserMessage
 	{
 		public string Username { get; set; }
 		public Guid GameId { get; set; }
 		public string Reason { get; set; }
 
-		public JoinGameRejectionMessage(string username, Guid gameId, string reason)
+		public JoinGameRejectionMessage(string connectionId, string username, Guid gameId, string reason) : base(connectionId)
 		{
 			Username = username;
 			GameId = gameId;
@@ -36,13 +46,13 @@ namespace Octogami.ConnectFour.Application.Actor
 		}
 	}
 
-	public class JoinGameAcceptedMessage
+	public class JoinGameAcceptedMessage : SignalRUserMessage
 	{
 		public string Username { get; set; }
 		public Guid GameId { get; set; }
 		public string PlayerSlot { get; set; }
 
-		public JoinGameAcceptedMessage(string username, Guid gameId, string playerSlot)
+		public JoinGameAcceptedMessage(string connectionId, string username, Guid gameId, string playerSlot) : base(connectionId)
 		{
 			Username = username;
 			GameId = gameId;
