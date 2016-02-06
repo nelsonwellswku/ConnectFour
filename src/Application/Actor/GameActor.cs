@@ -29,7 +29,7 @@ namespace Octogami.ConnectFour.Application.Actor
 				_playerOne = msg.Username;
 				var playerSlot = "PlayerOne";
 
-				Sender.Tell(new JoinGameAcceptedMessage(msg.ConnectionId, msg.Username, _gameId, playerSlot));
+				Sender.Tell(new JoinGameAcceptedConnectionMessage(msg.ConnectionId, msg.Username, _gameId, playerSlot));
 
 				Become(PendingGame);
 			});
@@ -42,7 +42,7 @@ namespace Octogami.ConnectFour.Application.Actor
 				_playerTwo = msg.Username;
 				var playerSlot = "PlayerTwo";
 
-				Sender.Tell(new JoinGameAcceptedMessage(msg.ConnectionId, msg.Username, _gameId, playerSlot));
+				Sender.Tell(new JoinGameAcceptedConnectionMessage(msg.ConnectionId, msg.Username, _gameId, playerSlot));
 
 				Become(PlayerOneTurn);
 			});
@@ -50,7 +50,7 @@ namespace Octogami.ConnectFour.Application.Actor
 
 		public void PlayerOneTurn()
 		{
-			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.ConnectionId, msg.Username, msg.GameId, "Game full")));
+			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionConnectionMessage(msg.ConnectionId, msg.Username, msg.GameId, "Game full")));
 
 			Receive<MakeMove>(msg =>
 			{
@@ -67,13 +67,13 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				if (_gameBoard.IsGameOver(BoardPiece.PlayerOne))
 				{
-					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, _playerOne));
-					Sender.Tell(new GameOverMessage(_gameId));
+					Sender.Tell(new GameStatusConnectionMessage(msg.ConnectionId, _gameBoard.Board, true, _playerOne));
+					Sender.Tell(new GameOverConnectionMessage(msg.ConnectionId, _gameId));
 				}
 				else if (_gameBoard.IsDraw())
 				{
-					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, "Draw"));
-					Sender.Tell(new GameOverMessage(_gameId));
+					Sender.Tell(new GameStatusConnectionMessage(msg.ConnectionId, _gameBoard.Board, true, "Draw"));
+					Sender.Tell(new GameOverConnectionMessage(msg.ConnectionId, _gameId));
 				}
 				else
 				{
@@ -84,7 +84,7 @@ namespace Octogami.ConnectFour.Application.Actor
 
 		public void PlayerTwoTurn()
 		{
-			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionMessage(msg.ConnectionId, msg.Username, msg.GameId, "Game full")));
+			Receive<JoinGameById>(msg => Sender.Tell(new JoinGameRejectionConnectionMessage(msg.ConnectionId, msg.Username, msg.GameId, "Game full")));
 
 			Receive<MakeMove>(msg =>
 			{
@@ -101,13 +101,13 @@ namespace Octogami.ConnectFour.Application.Actor
 
 				if(_gameBoard.IsGameOver(BoardPiece.PlayerTwo))
 				{
-					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, _playerTwo));
-					Sender.Tell(new GameOverMessage(_gameId));
+					Sender.Tell(new GameStatusConnectionMessage(msg.ConnectionId, _gameBoard.Board, true, _playerTwo));
+					Sender.Tell(new GameOverConnectionMessage(msg.ConnectionId, _gameId));
 				}
 				else if(_gameBoard.IsDraw())
 				{
-					Sender.Tell(new GameStatusMessage(_gameBoard.Board, true, "Draw"));
-					Sender.Tell(new GameOverMessage(_gameId));
+					Sender.Tell(new GameStatusConnectionMessage(msg.ConnectionId, _gameBoard.Board, true, "Draw"));
+					Sender.Tell(new GameOverConnectionMessage(msg.ConnectionId, _gameId));
 				}
 				else
 				{

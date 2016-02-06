@@ -14,7 +14,7 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 			var gameId = Guid.NewGuid();
 			var actor = Sys.ActorOf(Props.Create(() => new GameActor()));
 			actor.Tell(new JoinGameById("1", "John", gameId));
-			ExpectMsg<JoinGameAcceptedMessage>(msg =>
+			ExpectMsg<JoinGameAcceptedConnectionMessage>(msg =>
 				msg.Username == "John" &&
 				msg.GameId == gameId &&
 				msg.PlayerSlot == "PlayerOne"
@@ -27,9 +27,9 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 			var gameId = Guid.NewGuid();
 			var actor = Sys.ActorOf(Props.Create(() => new GameActor()));
 			actor.Tell(new JoinGameById("1", "John", gameId));
-			ExpectMsg<JoinGameAcceptedMessage>();
+			ExpectMsg<JoinGameAcceptedConnectionMessage>();
 			actor.Tell(new JoinGameById("2", "Jane", gameId));
-			ExpectMsg<JoinGameAcceptedMessage>(msg => msg.Username == "Jane" && msg.GameId == gameId && msg.PlayerSlot == "PlayerTwo");
+			ExpectMsg<JoinGameAcceptedConnectionMessage>(msg => msg.Username == "Jane" && msg.GameId == gameId && msg.PlayerSlot == "PlayerTwo");
 		}
 
 		[Test]
@@ -38,13 +38,13 @@ namespace Octogami.ConnectFour.Application.Tests.Actor
 			var gameId = Guid.NewGuid();
 			var actor = Sys.ActorOf(Props.Create(() => new GameActor()));
 			actor.Tell(new JoinGameById("1", "John", gameId));
-			ExpectMsg<JoinGameAcceptedMessage>();
+			ExpectMsg<JoinGameAcceptedConnectionMessage>();
 
 			actor.Tell(new JoinGameById("2", "Jane", gameId));
-			ExpectMsg<JoinGameAcceptedMessage>();
+			ExpectMsg<JoinGameAcceptedConnectionMessage>();
 
 			actor.Tell(new JoinGameById("3", "Rudolph", gameId));
-			ExpectMsg<JoinGameRejectionMessage>(msg => msg.Username == "Rudolph" && msg.GameId == gameId && msg.Reason == "Game full");
+			ExpectMsg<JoinGameRejectionConnectionMessage>(msg => msg.Username == "Rudolph" && msg.GameId == gameId && msg.Reason == "Game full");
 		}
 	}
 }

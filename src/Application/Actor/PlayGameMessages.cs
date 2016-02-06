@@ -4,7 +4,7 @@ using Octogami.ConnectFour.Application.Game;
 
 namespace Octogami.ConnectFour.Application.Actor
 {
-	public class MakeMove : SignalRUserMessage
+	public class MakeMove : UserConnectionMessage
 	{
 		public string Username { get; }
 		public int Column { get; }
@@ -16,13 +16,13 @@ namespace Octogami.ConnectFour.Application.Actor
 		}
 	}
 
-	public class GameStatusMessage
+	public class GameStatusConnectionMessage : UserConnectionMessage
 	{
 		public IReadOnlyList<IReadOnlyList<BoardPiece>> Board { get; }
 		public bool IsGameOver { get; }
 		public string Winner { get; }
 
-		public GameStatusMessage(IReadOnlyList<IReadOnlyList<BoardPiece>> board, bool isGameOver, string winner)
+		public GameStatusConnectionMessage(string connectionId, IReadOnlyList<IReadOnlyList<BoardPiece>> board, bool isGameOver, string winner) : base(connectionId)
 		{
 			Board = board;
 			IsGameOver = isGameOver;
@@ -30,11 +30,11 @@ namespace Octogami.ConnectFour.Application.Actor
 		}
 	}
 
-	public class GameOverMessage
+	public class GameOverConnectionMessage : UserConnectionMessage
 	{
 		public Guid GameId { get; }
 
-		public GameOverMessage(Guid gameId)
+		public GameOverConnectionMessage(string connectionId, Guid gameId) : base(connectionId)
 		{
 			GameId = gameId;
 		}

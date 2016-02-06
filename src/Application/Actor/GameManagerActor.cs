@@ -40,7 +40,7 @@ namespace Octogami.ConnectFour.Application.Actor
 				dictToSendMessageTo[gameToJoin].Tell(new JoinGameById(msg.ConnectionId, msg.Username, gameToJoin), Sender);
 			});
 
-			Receive<GameOverMessage>(msg =>
+			Receive<GameOverConnectionMessage>(msg =>
 			{
 				EndGame(_pendingGames, msg.GameId);
 				EndGame(_activeGames, msg.GameId);
