@@ -1,2 +1,5 @@
 ﻿angular.module("ConnectFour", [])
-    .controller("GameController", GameController);
+
+    .factory("GameStateService", GameStateService)
+
+    .controller("GameController", ["GameStateService", GameController]);

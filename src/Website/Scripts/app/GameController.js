@@ -1,14 +1,7 @@
-﻿function GameController() {
-    this.board = [
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0]
-    ];
+﻿function GameController(gameStateService) {
+    this.board = gameStateService.board;
 
     this.dropPiece = function(index) {
-        alert(index);
+        
     }
 }
