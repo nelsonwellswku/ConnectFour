@@ -1,3 +1,14 @@
 ﻿function GameController() {
-    this.Greeting = "Hello player!";
+    this.board = [
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]
+    ];
+
+    this.dropPiece = function(index) {
+        alert(index);
+    }
 }

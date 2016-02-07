@@ -4,5 +4,21 @@
 
 
 <div ng-controller="GameController as game">
-    <p>{{game.Greeting}}</p>
+    <ul ng-repeat="row in game.board[0] track by $index">
+        <li style="float:left">
+            <button ng-click="game.dropPiece($index)">Drop Piece</button>
+        </li>
+    </ul>
+
+    <br/>
+
+    <ul ng-repeat="row in game.board track by $index">
+        <li>
+            <ul ng-repeat="col in row track by $index">
+                <p style="float: left">{{col}}</p>
+            </ul>
+            <br/>
+        </li>
+    </ul>
+
 </div>
