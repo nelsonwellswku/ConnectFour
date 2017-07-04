@@ -9,7 +9,6 @@
     ];
 
     var connectFourHubProxy = $.connection.connectFourHub;
-    alert($.connection);
     connectFourHubProxy.client.updateBoard = function(board) {
         currentBoard = board;
     };
